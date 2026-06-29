@@ -1,0 +1,27 @@
+{
+  "candidate_name": "Rahul Mehta",
+  "email": "rahul.mehta.dev@outlook.com",
+  "phone": "+91 91234 56780",
+  "skills": [
+    "Docker",
+    "TypeScript",
+    "Azure",
+    "PostgreSQL",
+    "React",
+    "Express",
+    "JavaScript",
+    "AWS",
+    "Node.js",
+    "CI/CD",
+    "MongoDB"
+  ],
+  "education": [
+    "B.Tech in Computer Science and Engineering",
+    "Vellore Institute of Technology | 2016 \u2013 2020"
+  ],
+  "experience_summary": "applications. Strong background in React, Node.js, and cloud deployment, with a focus on clean architecture and",
+  "extraction_confidence": "high",
+  "pdf_file": "Rahul Mehta.pdf",
+  "num_pages": 1,
+  "full_text": "Rahul Mehta\n Pune, Maharashtra, India | +91 91234 56780 | rahul.mehta.dev@outlook.com | github.com/rahulmehta-dev\nPROFESSIONAL SUMMARY\nFull-stack web developer with 5 years of experience designing and shipping responsive, high-performance web\napplications. Strong background in React, Node.js, and cloud deployment, with a focus on clean architecture and\ndeveloper experience.\nSKILLS\nJavaScript (ES6+)\nTypeScript\nReact.js\nNode.js\nExpress.js\nNext.js\nMongoDB\nPostgreSQL\nREST APIs\nDocker\nAWS / Azure\nCI/CD (GitHub Actions)\nHTML5 / CSS3\nTailwind CSS\nJest / Cypress\nWORK EXPERIENCE\nSenior Frontend Engineer \u2014 Skyloop Technologies\nPune, India | Mar 2023 \u2013 Present\n\u007f Led migration of a legacy AngularJS app to React + TypeScript, improving page load speed by 35%.\n\u007f Built a component library adopted across 5 product teams, reducing UI development time by 25%.\n\u007f Implemented CI/CD pipelines with GitHub Actions, cutting deployment time from 40 minutes to 6.\n\u007f Reviewed pull requests and mentored 3 junior developers on testing best practices.\nFull-Stack Developer \u2014 Quantix Software Solutions\nHyderabad, India | Aug 2020 \u2013 Feb 2023\n\u007f Developed and maintained a multi-tenant SaaS platform using Node.js, Express, and PostgreSQL.\n\u007f Designed REST APIs serving over 50,000 daily active users with 99.9% uptime.\n\u007f Containerized services with Docker, simplifying local development and staging deployments.\nPROJECTS\nTaskFlow \u2014 Open Source Kanban App\n\u007f Built a real-time collaborative kanban board using React, Socket.io, and MongoDB.\n\u007f Reached 800+ GitHub stars; implemented drag-and-drop boards with optimistic UI updates.\nEDUCATION\nB.Tech in Computer Science and Engineering\nVellore Institute of Technology | 2016 \u2013 2020\nCERTIFICATIONS\n\u007f AWS Certified Developer \u2013 Associate (2022)\n\u007f Meta Front-End Developer Professional Certificate (2021)\n"
+}

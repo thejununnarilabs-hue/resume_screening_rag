@@ -1,0 +1,21 @@
+Extract the following information from the resume text provided:
+
+1. CANDIDATE NAME: Extract the full name of the candidate
+2. EMAIL: Extract the email address
+3. PHONE: Extract the phone number
+4. SKILLS: List all technical and professional skills mentioned
+5. EDUCATION: List all degrees, certifications, and educational background
+6. EXPERIENCE: Summarize professional experience and job roles
+7. PROJECTS: List significant projects worked on (if mentioned)
+8. ACHIEVEMENTS: Extract awards, recognitions, and key accomplishments
+
+EXTRACTION GUIDELINES:
+- Be precise and extract verbatim information from the resume
+- For skills: Identify programming languages, frameworks, tools, methodologies
+- For education: Include degree level, field of study, university name, graduation year
+- For experience: Include job titles, companies, duration, key responsibilities
+- If information is not available, indicate as "Not mentioned" or leave blank
+- Extract only what is explicitly stated in the resume
+
+OUTPUT FORMAT:
+Return the extracted information in a structured format that can be easily parsed and stored.

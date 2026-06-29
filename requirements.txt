@@ -1,0 +1,27 @@
+# Core Dependencies
+streamlit==1.28.1
+streamlit-pdf-viewer==0.0.7
+
+# PDF Processing
+PyPDF2==3.0.1
+pdfplumber==0.10.3
+
+# Embeddings and Vector DB
+sentence-transformers==2.2.2
+chromadb==0.4.13
+
+# LLM and Ollama
+requests==2.31.0
+ollama==0.1.11
+
+# Data Processing
+numpy==1.24.3
+pandas==2.0.3
+
+# Utilities
+python-dotenv==1.0.0
+tqdm==4.66.1
+
+# Excel Export (for evaluation reports)
+openpyxl==3.1.2
+xlsxwriter==3.1.2

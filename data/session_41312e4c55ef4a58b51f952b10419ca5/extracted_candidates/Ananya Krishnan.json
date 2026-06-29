@@ -1,0 +1,29 @@
+{
+  "candidate_name": "Ananya Krishnan",
+  "email": "ananya.krishnan.ds@gmail.com",
+  "phone": "+91 98765 43210",
+  "skills": [
+    "Deep Learning",
+    "SQL",
+    "Machine Learning",
+    "Flask",
+    "R",
+    "NLP",
+    "TensorFlow",
+    "Git",
+    "PyTorch",
+    "Python",
+    "AWS"
+  ],
+  "education": [
+    "M.Sc. in Data Science",
+    "PSG College of Technology | 2018 \u2013 2020",
+    "B.Sc. in Statistics",
+    "Bharathiar University | 2015 \u2013 2018"
+  ],
+  "experience_summary": "segmentation, and NLP-based text classification. Skilled in translating business problems into statistical models and deploying them into production pipelines using Python and cloud platforms.",
+  "extraction_confidence": "high",
+  "pdf_file": "Ananya Krishnan.pdf",
+  "num_pages": 1,
+  "full_text": "Ananya Krishnan\n Coimbatore, Tamil Nadu, India | +91 98765 43210 | ananya.krishnan.ds@gmail.com | linkedin.com/in/ananyakrishnan-ds\nPROFESSIONAL SUMMARY\nData Scientist with 4+ years of experience building machine learning models for demand forecasting, customer\nsegmentation, and NLP-based text classification. Skilled in translating business problems into statistical models and\ndeploying them into production pipelines using Python and cloud platforms.\nSKILLS\nPython\nSQL\nR\nScikit-learn\nTensorFlow\nPyTorch\nPandas / NumPy\nFeature Engineering\nA/B Testing\nTableau\nPower BI\nAWS SageMaker\nNatural Language Processing\nTime Series Forecasting\nGit\nWORK EXPERIENCE\nData Scientist \u2014 Veridian Analytics Pvt Ltd\nBengaluru, India | Jul 2022 \u2013 Present\n\u007f Built a demand-forecasting model using XGBoost that reduced inventory holding costs by 18% across 12\nwarehouses.\n\u007f Developed an NLP pipeline to classify customer support tickets into 9 categories, cutting manual triage time by\n40%.\n\u007f Partnered with product teams to design and analyze A/B tests, informing 6 major feature launches.\n\u007f Mentored 2 junior analysts on statistical modeling and reproducible research practices.\nData Analyst \u2014 Northbridge Consulting\nChennai, India | Jun 2020 \u2013 Jun 2022\n\u007f Automated weekly reporting workflows in Python, saving roughly 10 analyst-hours per week.\n\u007f Built customer segmentation models that improved targeted marketing conversion by 12%.\n\u007f Created interactive Tableau dashboards used by leadership for quarterly business reviews.\nPROJECTS\nChurn Prediction Engine (Personal Project)\n\u007f Designed an end-to-end churn prediction pipeline using scikit-learn and deployed it via Flask on AWS EC2.\n\u007f Achieved 0.87 ROC-AUC on a telecom churn dataset using gradient boosting and SMOTE for class balancing.\nEDUCATION\nM.Sc. in Data Science\nPSG College of Technology, Coimbatore | 2018 \u2013 2020\nB.Sc. in Statistics\nBharathiar University, Coimbatore | 2015 \u2013 2018\nCERTIFICATIONS\n\u007f AWS Certified Machine Learning \u2013 Specialty (2023)\n\u007f Deep Learning Specialization, Coursera (2021)\n"
+}

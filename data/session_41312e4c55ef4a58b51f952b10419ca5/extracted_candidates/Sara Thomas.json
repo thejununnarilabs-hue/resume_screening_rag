@@ -1,0 +1,25 @@
+{
+  "candidate_name": "Sara Thomas",
+  "email": "sara.thomas.devops@protonmail.com",
+  "phone": "+91 90011 22334",
+  "skills": [
+    "Docker",
+    "DevOps",
+    "Linux",
+    "Microservices",
+    "Python",
+    "Azure",
+    "Kubernetes",
+    "AWS",
+    "CI/CD"
+  ],
+  "education": [
+    "B.Tech in Information Technology",
+    "Cochin University of Science and Technology | 2015 \u2013 2019"
+  ],
+  "experience_summary": "pipelines, and improving system reliability across AWS and Azure environments. Passionate about Infrastructure as Code and reducing operational toil.",
+  "extraction_confidence": "high",
+  "pdf_file": "Sara Thomas.pdf",
+  "num_pages": 1,
+  "full_text": "Sara Thomas\n Kochi, Kerala, India | +91 90011 22334 | sara.thomas.devops@protonmail.com | linkedin.com/in/sarathomas-cloud\nPROFESSIONAL SUMMARY\nCloud and DevOps Engineer with 6 years of experience designing scalable infrastructure, automating deployment\npipelines, and improving system reliability across AWS and Azure environments. Passionate about Infrastructure as\nCode and reducing operational toil.\nSKILLS\nAWS (EC2, S3, Lambda, EKS)\nAzure\nTerraform\nKubernetes\nDocker\nAnsible\nJenkins\nGitHub Actions\nPrometheus / Grafana\nLinux Administration\nBash / Python Scripting\nNetworking & Security\nELK Stack\nCI/CD Pipelines\nSite Reliability Engineering\nWORK EXPERIENCE\nSenior DevOps Engineer \u2014 Cirrus Cloud Systems\nBengaluru, India | Jan 2022 \u2013 Present\n\u007f Migrated on-premise infrastructure to AWS using Terraform, reducing infra provisioning time by 70%.\n\u007f Implemented Kubernetes-based microservices architecture supporting 200+ deployments per month.\n\u007f Built monitoring and alerting with Prometheus and Grafana, reducing mean time to detect incidents by 50%.\n\u007f Designed disaster recovery procedures that reduced potential downtime from 4 hours to under 20 minutes.\nDevOps Engineer \u2014 Wavecrest Infotech\nKochi, India | Jun 2019 \u2013 Dec 2021\n\u007f Automated CI/CD pipelines with Jenkins for 15+ microservices, cutting release cycle time by 60%.\n\u007f Managed containerized deployments with Docker and Kubernetes across staging and production.\n\u007f Implemented centralized logging using the ELK stack, improving root-cause analysis speed.\nEDUCATION\nB.Tech in Information Technology\nCochin University of Science and Technology | 2015 \u2013 2019\nCERTIFICATIONS\n\u007f AWS Certified Solutions Architect \u2013 Professional (2023)\n\u007f Certified Kubernetes Administrator (CKA), 2022\n\u007f HashiCorp Certified: Terraform Associate (2021)\n"
+}
