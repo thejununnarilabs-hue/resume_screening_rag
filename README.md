@@ -147,10 +147,10 @@ ollama list
 ## 📊 Ranking Algorithm
 
 ```
-Final Score = 0.60 * Semantic Similarity
-            + 0.20 * Skill Match
-            + 0.10 * Experience Match
-            + 0.10 * Education Match
+Final Score = Skills Match - 45%
+            + Experience Match - 25%
+            + Education Match - 10%
+            + Projects / Responsibilities Match - 20%
 ```
 
 ---
