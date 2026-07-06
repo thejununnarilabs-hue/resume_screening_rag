@@ -3,17 +3,17 @@
   "email": "ananya.krishnan.ds@gmail.com",
   "phone": "+91 98765 43210",
   "skills": [
-    "Deep Learning",
-    "SQL",
-    "Machine Learning",
-    "Flask",
-    "R",
-    "NLP",
-    "TensorFlow",
     "Git",
-    "PyTorch",
+    "Machine Learning",
     "Python",
-    "AWS"
+    "Deep Learning",
+    "Flask",
+    "TensorFlow",
+    "AWS",
+    "R",
+    "PyTorch",
+    "SQL",
+    "NLP"
   ],
   "education": [
     "M.Sc. in Data Science",

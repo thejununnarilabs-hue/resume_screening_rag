@@ -94,14 +94,14 @@ class CandidateExtractor:
         'Oracle', 'DynamoDB', 'Firebase',
         
         # Cloud
-        'AWS', 'Azure', 'GCP', 'Google Cloud', 'Kubernetes', 'Docker',
+        'AWS', 'Azure', 'Azure OpenAI', 'Azure AI', 'GCP', 'Google Cloud', 'Kubernetes', 'Docker',
         
         # ML/AI
         'Machine Learning', 'NLP', 'Deep Learning', 'RAG', 'LLM',
         'Transformer', 'BERT', 'GPT', 'Computer Vision', 'Neural Networks',
         
         # Other
-        'Git', 'Linux', 'DevOps', 'CI/CD', 'REST API', 'GraphQL',
+        'Git', 'Linux', 'DevOps', 'CI/CD', 'REST API', 'REST APIs', 'GraphQL',
         'Agile', 'Scrum', 'Microservices', 'Docker', 'Kubernetes'
     }
 

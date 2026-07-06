@@ -4,7 +4,6 @@ from datetime import datetime
 import html
 import re
 from typing import Any, Dict, List, Optional
-from urllib.parse import quote
 from uuid import uuid4
 
 import streamlit as st
@@ -238,8 +237,7 @@ def enhance_chatbot_response(response: str, ranking_data: List[Dict[str, Any]]) 
         if not name or not resume:
             continue
 
-        safe_resume = html.escape(resume)
-        resume_link = f'<a href="/?resume={quote(resume)}">{safe_resume}</a>'
+        resume_link = html.escape(resume)
         enhanced = re.sub(
             rf"\(`?{re.escape(resume)}`?\)",
             f"({resume_link})",
@@ -269,6 +267,110 @@ def enhance_chatbot_response(response: str, ranking_data: List[Dict[str, Any]]) 
             flags=re.IGNORECASE,
         )
     return enhanced
+
+
+def resume_links_for_response(content: str, ranking_data: List[Dict[str, Any]]) -> List[Dict[str, str]]:
+    """Find mentioned resumes so Streamlit-native navigation can open them."""
+    plain_content = re.sub(r"<[^>]+>", " ", content or "")
+    plain_content = html.unescape(plain_content).lower()
+    links = []
+    seen = set()
+
+    for candidate in ranking_data:
+        name = str(candidate.get("candidate_name", "")).strip()
+        resume = str(candidate.get("pdf_file", "")).strip()
+        if not name or not resume or resume.lower() in seen:
+            continue
+
+        if name.lower() in plain_content or resume.lower() in plain_content:
+            seen.add(resume.lower())
+            links.append({
+                "candidate_name": name,
+                "pdf_file": resume,
+            })
+
+    return links
+
+
+def open_resume_from_chat(pdf_file: str) -> None:
+    """Open a resume using Streamlit state navigation, not a browser reload."""
+    target = str(pdf_file or "").replace("\\", "/").split("/")[-1].strip().lower()
+    for candidate in st.session_state.get("ranking_data", []) + st.session_state.get("candidates", []):
+        candidate_file = str(candidate.get("pdf_file", "")).replace("\\", "/").split("/")[-1].strip().lower()
+        if candidate_file == target:
+            st.session_state.selected_candidate = candidate
+            st.session_state.show_resume_pdf = True
+            st.switch_page("app.py")
+            return
+
+    st.session_state.last_error = f"Could not open resume '{pdf_file}'. It was not found in the current session."
+
+
+def render_assistant_message(content: str, resume_links: List[Dict[str, str]], message_index: int) -> None:
+    """Render assistant text with the resume link beside the candidate name."""
+    rendered = content
+    inline_links = []
+
+    for link in resume_links:
+        candidate_name = link.get("candidate_name", "")
+        pdf_file = link.get("pdf_file", "")
+        if not candidate_name or not pdf_file:
+            continue
+
+        rendered = re.sub(
+            rf"\n?\s*-?\s*Resume File Name:\s*`?{re.escape(pdf_file)}`?",
+            "",
+            rendered,
+            flags=re.IGNORECASE,
+        )
+        rendered = re.sub(
+            rf"\(\s*`?{re.escape(pdf_file)}`?\s*\)",
+            "",
+            rendered,
+            flags=re.IGNORECASE,
+        )
+
+        name_match = re.search(
+            rf"-?\s*Name:\s*\**{re.escape(candidate_name)}\**",
+            rendered,
+            flags=re.IGNORECASE,
+        )
+        if name_match:
+            inline_links.append({
+                "name_start": name_match.start(),
+                "insert_after": name_match.end(),
+                "candidate_name": candidate_name,
+                "pdf_file": pdf_file,
+            })
+
+    if not inline_links:
+        st.markdown(rendered, unsafe_allow_html=True)
+        return
+
+    inline_links.sort(key=lambda item: item["name_start"])
+    cursor = 0
+    for index, link in enumerate(inline_links):
+        before = rendered[cursor:link["name_start"]]
+        name_text = rendered[link["name_start"]:link["insert_after"]]
+        next_start = inline_links[index + 1]["name_start"] if index + 1 < len(inline_links) else len(rendered)
+        after = rendered[link["insert_after"]:next_start]
+
+        if before.strip():
+            st.markdown(before, unsafe_allow_html=True)
+
+        name_col, file_col = st.columns([0.28, 0.72], gap="small")
+        with name_col:
+            st.markdown(name_text, unsafe_allow_html=True)
+        with file_col:
+            if st.button(
+                f"({link['pdf_file']})",
+                key=f"chat_resume_{message_index}_{index}_{link['pdf_file']}",
+                help=f"Open {link['candidate_name']} on the resume details page",
+            ):
+                open_resume_from_chat(link["pdf_file"])
+        if after.strip():
+            st.markdown(after, unsafe_allow_html=True)
+        cursor = next_start
 
 
 def make_chat_title(user_input: str) -> str:
@@ -364,7 +466,14 @@ Ask about candidate skills, ranking reasons, comparisons, contact details, exper
         for message_index, message in enumerate(messages):
             with st.chat_message(message.get("role", "assistant")):
                 content = message.get("content", "")
-                st.markdown(content, unsafe_allow_html=True)
+                resume_links = message.get("resume_links") or resume_links_for_response(
+                    content,
+                    st.session_state.get("ranking_data", []),
+                )
+                if message.get("role") == "assistant" and resume_links:
+                    render_assistant_message(content, resume_links, message_index)
+                else:
+                    st.markdown(content, unsafe_allow_html=True)
 
     st.markdown('<div id="chat-bottom"></div>', unsafe_allow_html=True)
     st.markdown(
@@ -408,7 +517,11 @@ def answer_question(user_input: str, chat: Dict[str, Any]) -> None:
     response = retrieval_engine.direct_answer(user_input, context)
     if response:
         enhanced = enhance_chatbot_response(response, st.session_state.get("ranking_data", []))
-        chat["messages"].append({"role": "assistant", "content": enhanced})
+        chat["messages"].append({
+            "role": "assistant",
+            "content": enhanced,
+            "resume_links": resume_links_for_response(enhanced, st.session_state.get("ranking_data", [])),
+        })
         persist_chat_state()
         record_chat_evaluation(user_input, response, context)
         return
@@ -429,7 +542,11 @@ def answer_question(user_input: str, chat: Dict[str, Any]) -> None:
         return
 
     enhanced = enhance_chatbot_response(response, st.session_state.get("ranking_data", []))
-    chat["messages"].append({"role": "assistant", "content": enhanced})
+    chat["messages"].append({
+        "role": "assistant",
+        "content": enhanced,
+        "resume_links": resume_links_for_response(enhanced, st.session_state.get("ranking_data", [])),
+    })
     persist_chat_state()
     record_chat_evaluation(user_input, response, context)
 

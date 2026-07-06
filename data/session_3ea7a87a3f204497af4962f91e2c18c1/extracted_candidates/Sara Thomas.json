@@ -3,15 +3,15 @@
   "email": "sara.thomas.devops@protonmail.com",
   "phone": "+91 90011 22334",
   "skills": [
-    "Docker",
-    "DevOps",
-    "Linux",
-    "Microservices",
     "Python",
+    "Microservices",
+    "AWS",
+    "Linux",
+    "DevOps",
+    "CI/CD",
     "Azure",
     "Kubernetes",
-    "AWS",
-    "CI/CD"
+    "Docker"
   ],
   "education": [
     "B.Tech in Information Technology",

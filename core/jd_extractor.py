@@ -22,14 +22,14 @@ class JDExtractor:
         'Oracle', 'DynamoDB', 'Firebase',
         
         # Cloud
-        'AWS', 'Azure', 'GCP', 'Google Cloud', 'Kubernetes', 'Docker',
+        'AWS', 'Azure', 'Azure OpenAI', 'Azure AI', 'GCP', 'Google Cloud', 'Kubernetes', 'Docker',
         
         # ML/AI
         'Machine Learning', 'NLP', 'Deep Learning', 'RAG', 'LLM',
         'Transformer', 'BERT', 'GPT', 'Computer Vision', 'Neural Networks',
         
         # Other
-        'Git', 'Linux', 'DevOps', 'CI/CD', 'REST API', 'GraphQL',
+        'Git', 'Linux', 'DevOps', 'CI/CD', 'REST API', 'REST APIs', 'GraphQL',
         'Agile', 'Scrum', 'Microservices', 'Docker', 'Kubernetes'
     }
     
@@ -57,6 +57,13 @@ class JDExtractor:
         'technologies': ['technologies', 'tech stack', 'technology stack', 'frameworks'],
         'certifications': ['certifications', 'certificates', 'licenses'],
         'domain_experience': ['domain experience', 'industry experience', 'domain knowledge'],
+        'experience_requirement': ['experience', 'experience requirement', 'minimum experience'],
+        'education_requirements': ['education', 'education requirements', 'qualification', 'qualifications'],
+        'responsibilities': [
+            'responsibilities', 'roles and responsibilities', 'duties',
+            'what you will do', 'key responsibilities', 'projects',
+            'project responsibilities', 'job responsibilities',
+        ],
     }
     
     @staticmethod
@@ -76,16 +83,20 @@ class JDExtractor:
 
         required_skills = list(section_skills.get('required_skills', []))
         preferred_skills = list(section_skills.get('preferred_skills', []))
-        categorized_terms = {
+        preferred_terms = {
             term.lower()
             for key, values in section_skills.items()
-            if key != 'required_skills'
+            if key == 'preferred_skills'
             for term in values
         }
 
         for skill in JDExtractor.SKILL_KEYWORDS:
             if re.search(r'\b' + re.escape(skill.lower()) + r'\b', text_lower):
-                if skill.lower() not in categorized_terms and skill not in required_skills:
+                if skill == 'Azure' and re.search(r'\bazure\s+(?:openai|ai)\b', text_lower):
+                    continue
+                if skill == 'REST API' and re.search(r'\brest\s+apis\b', text_lower):
+                    continue
+                if skill.lower() not in preferred_terms and skill not in required_skills:
                     required_skills.append(skill)
 
         return {
@@ -102,7 +113,13 @@ class JDExtractor:
         seen = set()
         deduped = []
         for item in items:
-            key = item.strip().lower()
+            key = re.sub(r"\s+", " ", item.strip().lower()).strip(" .")
+            key = {
+                "rest apis": "rest api",
+                "retrieval augmented generation": "rag",
+                "retrieval-augmented generation": "rag",
+                "azure openai": "azure ai",
+            }.get(key, key)
             if key and key not in seen:
                 seen.add(key)
                 deduped.append(item.strip())
@@ -114,7 +131,7 @@ class JDExtractor:
         sections = {key: "" for key in JDExtractor.SECTION_ALIASES}
         current_key: Optional[str] = None
 
-        for raw_line in text.splitlines():
+        for raw_line in JDExtractor.split_inline_headings(text).splitlines():
             line = raw_line.strip()
             if not line:
                 continue
@@ -133,9 +150,26 @@ class JDExtractor:
         return sections
 
     @staticmethod
+    def split_inline_headings(text: str) -> str:
+        """Put common inline section headings on their own lines."""
+        aliases = sorted(
+            {alias for values in JDExtractor.SECTION_ALIASES.values() for alias in values},
+            key=len,
+            reverse=True,
+        )
+        heading_pattern = "|".join(re.escape(alias) for alias in aliases)
+        return re.sub(
+            rf"(?<!^)\b({heading_pattern})\s*:",
+            r"\n\1:",
+            text,
+            flags=re.IGNORECASE,
+        )
+
+    @staticmethod
     def classify_section_heading(line: str) -> Optional[str]:
-        normalized = re.sub(r'[^a-z0-9+/#.\s-]', '', line.lower()).strip()
-        heading = normalized.split(':', 1)[0].strip()
+        lowered = line.lower().strip()
+        heading = lowered.split(':', 1)[0].strip()
+        heading = re.sub(r'[^a-z0-9+/#.\s-]', '', heading).strip()
         if len(heading.split()) > 8:
             return None
 
@@ -150,6 +184,10 @@ class JDExtractor:
         text_lower = text.lower()
         for skill in JDExtractor.SKILL_KEYWORDS:
             if re.search(r'\b' + re.escape(skill.lower()) + r'\b', text_lower):
+                if skill == 'Azure' and re.search(r'\bazure\s+(?:openai|ai)\b', text_lower):
+                    continue
+                if skill == 'REST API' and re.search(r'\brest\s+apis\b', text_lower):
+                    continue
                 terms.append(skill)
         terms.extend(JDExtractor.extract_list_items(text))
         return JDExtractor.dedupe_preserve_order(terms)
@@ -215,6 +253,25 @@ class JDExtractor:
                 education.append(keyword)
         
         return education
+
+    @staticmethod
+    def extract_responsibilities(text: str) -> List[str]:
+        """Extract explicit JD responsibilities and projects."""
+        sections = JDExtractor.extract_structured_sections(text)
+        responsibility_text = sections.get('responsibilities', '')
+        responsibilities = JDExtractor.extract_list_items(responsibility_text)
+
+        if not responsibilities:
+            patterns = [
+                r'\b(?:responsible for|you will|design|develop|build|implement|deploy|maintain|collaborate|integrate|create|manage|optimize)\b[^.\n]*(?:[.\n]|$)',
+            ]
+            for pattern in patterns:
+                responsibilities.extend(
+                    match.strip(" .\n\t-")
+                    for match in re.findall(pattern, text, flags=re.IGNORECASE)
+                )
+
+        return JDExtractor.dedupe_preserve_order(responsibilities)
     
     @staticmethod
     def extract_from_text(jd_text: str) -> Dict:
@@ -230,6 +287,7 @@ class JDExtractor:
         skills = JDExtractor.extract_skills_from_jd(jd_text)
         experience = JDExtractor.extract_experience_requirements(jd_text)
         education = JDExtractor.extract_education_requirements(jd_text)
+        responsibilities = JDExtractor.extract_responsibilities(jd_text)
         
         return {
             'required_skills': skills['required_skills'],
@@ -241,6 +299,7 @@ class JDExtractor:
             'structured_skills': skills,
             'experience_requirement': experience,
             'education_requirements': education,
+            'responsibilities': responsibilities,
             'full_text': jd_text,
             'total_required_skills': len(skills['required_skills']),
             'total_preferred_skills': len(skills['preferred_skills'])
@@ -272,6 +331,7 @@ class JDExtractor:
                     'structured_skills': {},
                     'experience_requirement': '',
                     'education_requirements': [],
+                    'responsibilities': [],
                     'full_text': '',
                     'total_required_skills': 0,
                     'total_preferred_skills': 0,
@@ -288,6 +348,7 @@ class JDExtractor:
                 'structured_skills': {},
                 'experience_requirement': '',
                 'education_requirements': [],
+                'responsibilities': [],
                 'full_text': '',
                 'total_required_skills': 0,
                 'total_preferred_skills': 0,

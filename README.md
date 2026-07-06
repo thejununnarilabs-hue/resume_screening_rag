@@ -4,7 +4,46 @@ A local Streamlit application for screening PDF resumes against a job descriptio
 
 The project runs locally. Uploaded resumes, extracted JSON, vector database files, chat sessions, and evaluation exports are stored inside the project folder.
 
-## What The Project Does
+---
+
+## 🚀 Quick Start (5 Minutes)
+
+### Prerequisites
+- Python 3.9+
+- 4GB RAM minimum
+- 2GB disk space
+- Administrator access (for installation)
+
+### Step 1: Install Ollama (5 mins)
+1. Download from https://ollama.ai
+2. Install and run
+3. In terminal:
+```bash
+ollama pull qwen2.5
+ollama serve  # Keep this running in background
+```
+
+### Step 2: Setup Project (2 mins)
+
+**Windows:**
+```bash
+cd resume_screening_rag
+run.bat
+```
+
+**Mac/Linux:**
+```bash
+cd resume_screening_rag
+bash run.sh
+```
+
+### Step 3: Launch App (1 min)
+- Browser opens automatically at `http://localhost:8501`
+- System is ready!
+
+---
+
+## 📋 What The Project Does
 
 1. Upload PDF resumes.
 2. Extract candidate name, email, phone, skills, education, experience summary, and raw resume text.
@@ -18,34 +57,105 @@ The project runs locally. Uploaded resumes, extracted JSON, vector database file
 10. Ask chatbot questions about rankings, skills, comparisons, experience, projects, education, and JD fit.
 11. Save chatbot evaluation metrics to Excel.
 
-## Main Features
+---
 
-- Multi-resume PDF upload.
-- Duplicate upload blocking by filename.
-- Session-based local storage.
-- Candidate extraction from text-based PDFs.
-- Structured education extraction.
-- Job description upload or paste input.
-- Candidate ranking with score breakdowns.
-- Ranking filters by name, resume filename, score, and top-N count.
-- Candidate detail view with contact details, skills, and PDF preview.
-- Separate Candidate Intelligence Assistant page.
-- Chat history persistence for the current session.
-- Direct deterministic answers for common ranking, comparison, and skill queries.
-- RAG answers through local Ollama when deterministic answers are not enough.
-- Clickable resume filenames in chatbot responses that navigate back to the dashboard candidate detail view.
-- Evaluation logging for assistant answers.
+## ✨ Main Features
 
-## Current Limitations
+- Multi-resume PDF upload
+- Duplicate upload blocking by filename
+- Session-based local storage
+- Candidate extraction from text-based PDFs
+- Structured education extraction
+- Job description upload or paste input
+- Candidate ranking with score breakdowns
+- Ranking filters by name, resume filename, score, and top-N count
+- Candidate detail view with contact details, skills, and PDF preview
+- Separate Candidate Intelligence Assistant page
+- Chat history persistence for current session
+- Direct deterministic answers for common ranking, comparison, and skill queries
+- RAG answers through local Ollama when deterministic answers are not enough
+- Clickable resume filenames in chatbot responses
+- Evaluation logging for assistant answers
 
-- Only PDF resumes are supported.
-- Scanned or image-only PDFs work only if extractable text is present.
-- The chatbot model is fixed to `qwen2.5:latest`.
-- Model switching is not exposed in the UI.
-- The app is intended for local use, not multi-user production deployment as-is.
-- Runtime data in `data/session_<id>/` is disposable session data.
+---
 
-## Tech Stack
+## 💻 First Run Workflow
+
+### 1️⃣ Upload Resumes (1-2 mins)
+- Click "Upload Resume"
+- Select 5-10 PDF files
+- Wait for extraction
+
+### 2️⃣ Process Resumes (2-3 mins)
+- Click "Start Processing"
+- System chunks and embeds
+- Creates vector database
+
+### 3️⃣ Add Job Description (1 min)
+- Paste or upload JD
+- System extracts requirements
+
+### 4️⃣ Generate Rankings (1 min)
+- Click "Generate Rankings"
+- View candidate scores
+
+### 5️⃣ Chat with AI (2 mins)
+- Ensure Ollama is running
+- Ask about candidates:
+  - "Which candidates have AWS?"
+  - "Why is candidate 1 ranked first?"
+  - "Compare candidates 2 and 3"
+
+---
+
+## 🔧 Key Commands
+
+### Windows
+```bash
+# Run app
+run.bat
+
+# Manual startup
+venv\Scripts\activate
+streamlit run app.py
+```
+
+### Mac/Linux
+```bash
+# Run app
+bash run.sh
+
+# Manual startup
+source venv/bin/activate
+streamlit run app.py
+```
+
+### Ollama (All platforms)
+```bash
+# Start Ollama
+ollama serve
+
+# Download Qwen2.5
+ollama pull qwen2.5
+
+# List installed models
+ollama list
+```
+
+---
+
+## 📊 Ranking Algorithm
+
+```
+Final Score = 0.60 * Semantic Similarity
+            + 0.20 * Skill Match
+            + 0.10 * Experience Match
+            + 0.10 * Education Match
+```
+
+---
+
+## 🏗️ Tech Stack
 
 | Area | Technology |
 | --- | --- |
@@ -59,7 +169,9 @@ The project runs locally. Uploaded resumes, extracted JSON, vector database file
 | Data handling | pandas, numpy |
 | Evaluation export | openpyxl, XlsxWriter |
 
-## Project Structure
+---
+
+## 📁 Project Structure
 
 ```text
 resume_screening_rag/
@@ -86,24 +198,6 @@ resume_screening_rag/
   README.md
     Main project documentation.
 
-  QUICKSTART.md
-    Short setup guide.
-
-  GETTING_STARTED.md
-    First-run walkthrough.
-
-  PROJECT_STRUCTURE.md
-    Older extended architecture notes.
-
-  DEPLOYMENT.md
-    Deployment notes.
-
-  COMPLETION_SUMMARY.md
-    Build summary.
-
-  IMPLEMENTATION_SUMMARY.md
-    Implementation notes.
-
   core/
     __init__.py
       Core package marker.
@@ -116,14 +210,12 @@ resume_screening_rag/
     chatbot.py
       Ollama integration.
       Checks model availability, builds the system prompt, calls Qwen 2.5,
-      supports non-streaming and streaming generation, and formats legacy
-      candidate responses.
+      supports non-streaming and streaming generation.
 
     chroma_manager.py
       ChromaDB wrapper.
       Creates collections, stores chunks, searches embeddings, retrieves
-      candidate-specific chunks, deletes candidate data, clears collections,
-      and reports collection stats.
+      candidate-specific chunks, deletes candidate data, clears collections.
 
     chunking.py
       Splits resume text into retrievable chunks.
@@ -133,20 +225,17 @@ resume_screening_rag/
     embeddings.py
       Sentence-transformer wrapper.
       Loads `BAAI/bge-base-en-v1.5`, encodes single texts, encodes batches,
-      attaches embeddings to chunks, computes similarity, and ranks by
-      embedding similarity.
+      attaches embeddings to chunks, computes similarity.
 
     evaluation.py
       Chatbot evaluation framework.
       Generates ground-truth QA pairs, calculates precision/recall,
-      evaluates faithfulness, relevancy, and ranking quality, records
-      evaluations, and exports results to Excel or JSON.
+      evaluates faithfulness, relevancy, and ranking quality.
 
     jd_extractor.py
       Job description parser.
       Extracts required skills, preferred skills, certifications, domain
-      experience, experience requirements, education requirements, and full
-      JD text from pasted text or uploaded PDFs.
+      experience, experience requirements, education requirements.
 
     pdf_parser.py
       PDF text extraction utilities.
@@ -155,27 +244,23 @@ resume_screening_rag/
     ranking.py
       Candidate ranking engine.
       Calculates skill match, experience match, education match, semantic
-      similarity score, final weighted score, BM25 score, and final ranking.
+      similarity score, final weighted score, BM25 score.
 
     retrieval.py
       Retrieval and direct-answer engine for the chatbot.
       Parses candidate references, detects ranking and skill queries,
-      retrieves similar documents, builds LLM context, formats direct
-      answers, compares candidates, formats skill-match blocks, and cleans
-      sensitive/contact data from comparison output.
+      retrieves similar documents, formats direct answers, compares candidates.
 
     session_manager.py
       Session file manager.
       Creates session folders, saves uploaded resumes, saves extracted
-      candidate JSON, saves generated ground truth, persists chat sessions,
-      clears session data, and removes old session folders.
+      candidate JSON, persists chat sessions, clears session data.
 
   pages/
     chatbot_engine.py
       Dedicated Streamlit chatbot page.
       Manages chat sessions, sidebar chat history, readiness checks,
-      retrieval engine setup, deterministic answer handling, Ollama fallback,
-      evaluation logging, and clickable resume links.
+      retrieval engine setup, deterministic answer handling.
 
   prompts/
     chatbot_system_prompt.txt
@@ -211,7 +296,277 @@ resume_screening_rag/
     Python cache files generated at runtime.
 ```
 
-## Application Workflow
+---
+
+## ⚠️ Troubleshooting
+
+### "Cannot connect to Ollama"
+- Is Ollama running? → `ollama serve`
+- Is port 11434 open? → Check firewall
+- Qwen2.5 installed? → `ollama pull qwen2.5`
+
+### "PDF extraction failed"
+- Is it a PDF? → Check file format
+- Is it text-based? → Scanned images won't work
+- Too large? → Try files < 50MB
+
+### "Embedding model loading slowly"
+- Normal on first run (~500MB download)
+- Will cache for future use
+- Check internet connection
+
+### "Streamlit not starting"
+- Venv activated? → `source venv/bin/activate` (Mac/Linux)
+- Dependencies installed? → `pip install -r requirements.txt`
+- Port 8501 in use? → Run on different port: `streamlit run app.py --server.port 8502`
+
+---
+
+## ⏱️ Performance Notes
+
+- First embedding model load: ~2-3 mins
+- Processing 100 resumes: ~5-10 mins
+- Ranking generation: < 1 sec
+- Chatbot response: 5-15 secs
+
+## 💡 Tips & Tricks
+
+1. **Batch Processing**: Upload 50+ resumes for better ranking insights
+2. **Custom Job Descriptions**: More detailed JDs = better matching
+3. **Chatbot Questions**: Try specific skills/experiences
+4. **Ranking Customization**: View Top 5 through Top 50
+5. **Session Management**: "Clear Session" between different batches
+
+### Try These Chatbot Questions:
+- "Which candidates have Python and machine learning experience?"
+- "Who has worked on cloud projects?"
+- "Why was candidate 5 ranked higher than candidate 6?"
+- "What are candidate 1's main technical skills?"
+- "Find candidates with AWS and DevOps experience"
+
+---
+
+## 🔒 Current Limitations
+
+- Only PDF resumes are supported
+- Scanned or image-only PDFs work only if extractable text is present
+- The chatbot model is fixed to `qwen2.5:latest`
+- Model switching is not exposed in the UI
+- The app is intended for local use, not multi-user production deployment as-is
+- Runtime data in `data/session_<id>/` is disposable session data
+
+---
+
+## 📦 Deployment Guide
+
+### Development vs Production
+
+**Local Development (Current Setup)**
+- ✓ Single machine
+- ✓ No authentication
+- ✓ Session-based data
+- ✓ Ollama local
+- ✓ All data local
+
+### Production Deployment Options
+
+#### Option 1: Local Server
+Best for: Single team, on-premises
+
+```bash
+# Setup
+pip install -r requirements.txt
+ollama pull qwen2.5
+
+# Run on port 80 (needs sudo/admin)
+streamlit run app.py --server.port 80 --server.address 0.0.0.0
+```
+
+#### Option 2: Docker Container
+Best for: Scalability, consistency
+
+```dockerfile
+FROM python:3.9-slim
+
+WORKDIR /app
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy project
+COPY . /app
+
+# Install Python dependencies
+RUN pip install -r requirements.txt
+
+# Download embedding model
+RUN python -c "from sentence_transformers import SentenceTransformer; SentenceTransformer('BAAI/bge-base-en-v1.5')"
+
+EXPOSE 8501
+
+CMD ["streamlit", "run", "app.py"]
+```
+
+Build and run:
+```bash
+docker build -t resume-screening .
+docker run -p 8501:8501 -p 11434:11434 resume-screening
+```
+
+#### Option 3: Cloud Deployment (AWS, GCP, Azure)
+
+**AWS EC2 + ECS:**
+1. Create EC2 instance (t3.large minimum)
+2. Install Docker and Ollama
+3. Push Docker image to ECR
+4. Deploy via ECS/Fargate
+
+**Google Cloud Run:**
+1. Containerize application
+2. Deploy to Cloud Run
+3. Set up Cloud Storage for persistent data
+4. Configure Cloud SQL for session management
+
+**Azure Container Instances:**
+1. Containerize application
+2. Deploy to ACI
+3. Use Azure Blob Storage for data
+4. Setup App Service for web frontend
+
+---
+
+## ⚡ Performance Optimization
+
+### Database Optimization
+```python
+# Use persistent ChromaDB
+chroma_manager = ChromaManager(
+    db_path="/persistent/chroma_db",
+    collection_name="resumes"
+)
+
+# Increase batch sizes
+embedding_model.encode_chunks(chunks, batch_size=64)
+```
+
+### Memory Management
+```python
+# Clear old sessions
+session_manager.clear_session()
+
+# Archive old evaluations
+evaluation_framework.export_to_json("exports/archive_2024.json")
+```
+
+### Caching Strategy
+```python
+# Cache embeddings
+import streamlit as st
+
+@st.cache_resource
+def get_embedding_model():
+    return EmbeddingModel()
+
+@st.cache_data
+def get_candidate_chunks(candidate_name):
+    return retrieve_chunks(candidate_name)
+```
+
+---
+
+## 🔐 Security Considerations
+
+### Authentication
+Add with Streamlit Community Cloud or custom middleware:
+```python
+import streamlit as st
+
+def require_login():
+    if 'authenticated' not in st.session_state:
+        username = st.text_input("Username")
+        password = st.text_input("Password", type="password")
+        
+        if st.button("Login"):
+            if authenticate(username, password):
+                st.session_state.authenticated = True
+            else:
+                st.error("Invalid credentials")
+    
+    return st.session_state.get('authenticated', False)
+
+if require_login():
+    main()
+```
+
+### Data Security
+```python
+import hashlib
+import os
+
+# Encrypt sensitive data
+def encrypt_file_path(path):
+    return hashlib.sha256(path.encode()).hexdigest()
+
+# Store credentials in environment
+OLLAMA_URL = os.getenv('OLLAMA_URL', 'http://localhost:11434')
+DB_PASSWORD = os.getenv('DB_PASSWORD', '')
+```
+
+### HTTPS/SSL
+```bash
+# Generate self-signed certificate
+openssl req -x509 -newkey rsa:4096 -nodes -out cert.pem -keyout key.pem -days 365
+
+# Run with SSL
+streamlit run app.py --server.sslCertFile=cert.pem --server.sslKeyFile=key.pem
+```
+
+---
+
+## 📊 Monitoring & Logging
+
+### Application Logging
+```python
+import logging
+
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler('logs/app.log'),
+        logging.StreamHandler()
+    ]
+)
+
+logger = logging.getLogger(__name__)
+logger.info("Resume processed successfully")
+logger.error("Error processing resume", exc_info=True)
+```
+
+### Performance Monitoring
+```python
+import time
+
+def monitor_performance(func):
+    def wrapper(*args, **kwargs):
+        start_time = time.time()
+        result = func(*args, **kwargs)
+        duration = time.time() - start_time
+        logger.info(f"{func.__name__} took {duration:.2f}s")
+        return result
+    return wrapper
+
+@monitor_performance
+def process_resume(pdf_path):
+    # Processing logic
+    pass
+```
+
+---
+
+## 🎯 Application Workflow
 
 ### 1. Startup And Session Initialization
 
@@ -309,10 +664,10 @@ The ranking flow combines:
 The base weighted score is:
 
 ```text
-0.60 * semantic similarity
-0.20 * skill match
-0.10 * experience match
+0.40 * skills match
+0.30 * experience match
 0.10 * education match
+0.20 * semantic content similarity
 ```
 
 The ranking engine then produces ranked candidate rows with:
@@ -554,10 +909,10 @@ Ranking weights:
 
 ```python
 RANKING_WEIGHTS = {
-    "semantic_similarity": 0.60,
-    "skill_match": 0.20,
-    "experience_match": 0.10,
+    "skill_match": 0.40,
+    "experience_match": 0.30,
     "education_match": 0.10,
+    "semantic_similarity": 0.20,
 }
 ```
 

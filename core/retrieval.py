@@ -517,7 +517,7 @@ class RetrievalEngine:
             return f"matched skills: {', '.join(relevant)}"
         if candidate.get('experience_summary'):
             return candidate.get('experience_summary')
-        return f"ranking score {candidate.get('final_score', 0):.1%}"
+        return f"ranking score {candidate.get('final_score', 0):.1f}%"
 
     @staticmethod
     def _top_count(query_lower: str) -> Optional[int]:
@@ -552,7 +552,7 @@ class RetrievalEngine:
             lines.append(
                 f"- Candidate {candidate.get('rank', '?')}: "
                 f"{candidate.get('candidate_name', 'Unknown')} - "
-                f"Score: {candidate.get('final_score', 0):.1%}"
+                f"Score: {candidate.get('final_score', 0):.1f}%"
             )
         return "\n".join(lines)
 
@@ -563,7 +563,7 @@ class RetrievalEngine:
             f"Candidate {candidate.get('rank', '?')} from the current ranking list:",
             f"Name: {candidate.get('candidate_name', 'Unknown')}",
             f"Resume File Name: {candidate.get('pdf_file', 'Not recorded')}",
-            f"Score: {candidate.get('final_score', 0):.1%}",
+            f"Score: {candidate.get('final_score', 0):.1f}%",
             f"Matched skills: {', '.join(skills) or 'None recorded'}",
             f"Experience match: {candidate.get('experience_match', 0):.1%}",
             f"Education match: {candidate.get('education_match', 0):.1%}",
@@ -576,11 +576,11 @@ class RetrievalEngine:
             f"Candidate {candidate.get('rank', '?')} is ranked at that position because of the current JD match score.",
             f"Candidate: {candidate.get('candidate_name', 'Unknown')}",
             f"Resume File Name: {candidate.get('pdf_file', 'Not recorded')}",
-            f"Score: {candidate.get('final_score', 0):.1%}",
+            f"Score: {candidate.get('final_score', 0):.1f}%",
             f"Matched skills: {', '.join(skills) or 'None recorded'}",
             f"Experience match: {candidate.get('experience_match', 0):.1%}",
             f"Education match: {candidate.get('education_match', 0):.1%}",
-        ])
+        ])     
 
     @staticmethod
     def _format_comparison(candidate1: Dict[str, Any], candidate2: Dict[str, Any]) -> str:
@@ -595,8 +595,7 @@ class RetrievalEngine:
         def block(label: str, candidate: Dict[str, Any]) -> str:
             return "\n".join([
                 f"{label}:",
-                f"- Name: {candidate['name']}",
-                f"- Resume File Name: {candidate['resume_file']}",
+                f"- Name: {candidate['name']} ({candidate['resume_file']})",
                 f"- Match Score: {candidate['match_score']}",
                 f"- Skills: {candidate['skills']}",
                 f"- Experience Summary: {candidate['experience_summary']}",
@@ -640,7 +639,7 @@ class RetrievalEngine:
         return {
             'name': RetrievalEngine._clean_text(candidate.get('candidate_name', 'Unknown')) or 'Unknown',
             'resume_file': RetrievalEngine._clean_resume_filename(candidate.get('pdf_file', 'Not recorded')),
-            'match_score': f"{candidate.get('final_score', 0):.1%}",
+            'match_score': f"{candidate.get('final_score', 0):.1f}%",
             'skills': ', '.join(clean_skills) or 'None recorded',
             'skills_list': clean_skills,
             'experience_summary': RetrievalEngine._clean_text(candidate.get('experience_summary', '')) or 'Not recorded',
@@ -746,7 +745,7 @@ class RetrievalEngine:
         if difference == 0:
             return "Both candidates have the same match score."
         stronger = label1 if score1 > score2 else label2
-        return f"{stronger} is higher by {difference:.1%}."
+        return f"{stronger} is higher by {difference:.1f} percentage points."
     
     def format_context_for_llm(self, context: Dict[str, Any]) -> str:
         """
@@ -770,7 +769,7 @@ class RetrievalEngine:
             for candidate in context['ranking_data'][:10]:
                 context_parts.append(f"Rank: {candidate.get('rank')}")
                 context_parts.append(f"Name: {candidate.get('candidate_name')}")
-                context_parts.append(f"Score: {candidate.get('final_score', 0):.2%}")
+                context_parts.append(f"Score: {candidate.get('final_score', 0):.2f}%")
                 context_parts.append(f"Matched Required Skills: {', '.join(candidate.get('matched_required_skills', [])) or 'None recorded'}")
                 context_parts.append(f"Matched Preferred Skills: {', '.join(candidate.get('matched_preferred_skills', [])) or 'None recorded'}")
                 context_parts.append(f"Missing Required Skills: {', '.join(candidate.get('missing_required_skills', [])) or 'None recorded'}")
@@ -801,7 +800,7 @@ class RetrievalEngine:
             for candidate in context['candidate_references']:
                 context_parts.append(f"Rank: {candidate.get('rank')}")
                 context_parts.append(f"Name: {candidate.get('candidate_name')}")
-                context_parts.append(f"Score: {candidate.get('final_score'):.2%}")
+                context_parts.append(f"Score: {candidate.get('final_score', 0):.2f}%")
                 context_parts.append("")
         
         return "\n".join(context_parts)

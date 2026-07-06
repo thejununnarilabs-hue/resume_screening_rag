@@ -200,7 +200,7 @@ class EvaluationFramework:
         """Generate expected answer for ranking explanation."""
         return f"""Ranked first because of the highest matching score against the JD.
 - Candidate: {candidate['candidate_name']}
-- Matching Score: {candidate['final_score']:.1%}
+- Matching Score: {candidate['final_score']:.1f}%
 - Matched Skills: {', '.join(candidate.get('matched_required_skills', []) + candidate.get('matched_preferred_skills', [])) or 'None recorded'}
 - Missing Required Skills: {', '.join(candidate.get('missing_required_skills', [])) or 'None recorded'}
 - Experience Alignment: {candidate['experience_match']:.1%}
@@ -213,7 +213,7 @@ class EvaluationFramework:
         return f"""Comparison generated from ranking data.
 
 {candidate1['candidate_name']}:
-- Overall Score: {candidate1['final_score']:.1%}
+- Overall Score: {candidate1['final_score']:.1f}%
 - Required Skills Matched: {', '.join(candidate1.get('matched_required_skills', [])) or 'None recorded'}
 - Missing Required Skills: {', '.join(candidate1.get('missing_required_skills', [])) or 'None recorded'}
 - Experience: {candidate1.get('experience_summary', 'Not recorded')}
@@ -221,7 +221,7 @@ class EvaluationFramework:
 - Rank Position: {candidate1.get('rank', 'N/A')}
 
 {candidate2['candidate_name']}:
-- Overall Score: {candidate2['final_score']:.1%}
+- Overall Score: {candidate2['final_score']:.1f}%
 - Required Skills Matched: {', '.join(candidate2.get('matched_required_skills', [])) or 'None recorded'}
 - Missing Required Skills: {', '.join(candidate2.get('missing_required_skills', [])) or 'None recorded'}
 - Experience: {candidate2.get('experience_summary', 'Not recorded')}

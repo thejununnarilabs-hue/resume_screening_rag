@@ -167,12 +167,18 @@ def apply_resume_query_param() -> None:
     if not resume_file:
         return
 
-    resume_file = unquote(resume_file)
+    def normalize_resume_ref(value: Any) -> str:
+        decoded = unquote(str(value or "")).replace("\\", "/").split("/")[-1]
+        return " ".join(decoded.strip().lower().split())
+
+    resume_key = normalize_resume_ref(resume_file)
     for candidate in st.session_state.get("ranking_data", []) + st.session_state.get("candidates", []):
-        if candidate.get("pdf_file") == resume_file:
+        if normalize_resume_ref(candidate.get("pdf_file")) == resume_key:
             st.session_state.selected_candidate = candidate
             st.session_state.show_resume_pdf = True
+            st.session_state.last_error = ""
             return
+    st.session_state.last_error = f"Could not open resume '{resume_file}'. It was not found in the current session."
 
 
 def clear_session() -> None:
@@ -417,15 +423,30 @@ def run_ranking() -> None:
 
     semantic_similarities: Dict[str, float] = {}
     jd_required_skills = st.session_state.jd_data.get("required_skills", [])
+    jd_preferred_skills = st.session_state.jd_data.get("preferred_skills", [])
+    jd_education = st.session_state.jd_data.get("education_requirements", [])
+    jd_experience = st.session_state.jd_data.get("experience_requirement", "")
     jd_full_text = st.session_state.jd_data.get("full_text", "")
-    jd_embedding = st.session_state.embedding_model.encode_text(f"{' '.join(jd_required_skills)} {jd_full_text}")
+    jd_embedding_text = " ".join([
+        " ".join(jd_required_skills),
+        " ".join(jd_preferred_skills),
+        jd_experience,
+        " ".join(jd_education),
+        jd_full_text,
+    ]).strip()
+    jd_embedding = st.session_state.embedding_model.encode_text(jd_embedding_text)
 
     progress_bar = st.progress(0)
     status_text = st.empty()
     for idx, candidate in enumerate(st.session_state.candidates, 1):
         status_text.text(f"Scoring {idx}/{len(st.session_state.candidates)}: {candidate['candidate_name']}")
         progress_bar.progress(idx / len(st.session_state.candidates))
-        candidate_text = f"{' '.join(candidate.get('skills', []))} {candidate.get('experience_summary', '')}"
+        candidate_text = " ".join([
+            " ".join(candidate.get('skills', [])),
+            candidate.get('experience_summary', ''),
+            " ".join(candidate.get('education', [])),
+            candidate.get('full_text', ''),
+        ]).strip()
         candidate_embedding = st.session_state.embedding_model.encode_text(candidate_text)
         semantic_similarities[candidate["candidate_name"]] = max(
             st.session_state.embedding_model.similarity(jd_embedding, candidate_embedding),
@@ -541,7 +562,7 @@ def get_filtered_rankings() -> List[Dict[str, Any]]:
             item for item in data
             if query in item.get("candidate_name", "").lower() or query in item.get("pdf_file", "").lower()
         ]
-    data = [item for item in data if item.get("final_score", 0) * 100 >= min_score]
+    data = [item for item in data if item.get("final_score", 0) >= min_score]
     data.sort(key=lambda item: item.get("final_score", 0), reverse=True)
 
     return data[:top_n]
@@ -570,7 +591,7 @@ def render_rankings() -> None:
             if st.button(candidate.get("candidate_name", "N/A"), key=f"name_{candidate.get('rank')}_{candidate.get('pdf_file')}"):
                 select_candidate(candidate)
         with score_col:
-            st.metric("Match Score", f"{candidate.get('final_score', 0):.1%}")
+            st.metric("Match Score", f"{candidate.get('final_score', 0):.1f}%")
         with resume_col:
             if st.button(candidate.get('pdf_file', 'Resume'), key=f"resume_{candidate.get('rank')}_{candidate.get('pdf_file')}"):
                 select_candidate(candidate)
@@ -621,6 +642,8 @@ def render_candidate_details() -> None:
         if st.button("Close Details", key="close_candidate_details"):
             st.session_state.selected_candidate = None
             st.session_state.show_resume_pdf = False
+            if "resume" in st.query_params:
+                del st.query_params["resume"]
             st.rerun()
 
     if st.session_state.show_resume_pdf:
@@ -636,6 +659,8 @@ def main() -> None:
     apply_resume_query_param()
     render_top_bar()
     render_sidebar()
+    if st.session_state.get("last_error"):
+        st.error(st.session_state.last_error)
     render_resume_upload()
     render_resume_processing()
     render_job_description()

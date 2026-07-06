@@ -19,10 +19,10 @@ EMBEDDING_BATCH_SIZE = 32
 
 # Ranking Weights
 RANKING_WEIGHTS = {
-    'semantic_similarity': 0.60,
-    'skill_match': 0.20,
-    'experience_match': 0.10,
-    'education_match': 0.10
+    'skill_match': 0.40,
+    'experience_match': 0.30,
+    'education_match': 0.10,
+    'semantic_similarity': 0.20
 }
 
 # Chatbot Configuration

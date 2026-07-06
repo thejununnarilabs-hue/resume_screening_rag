@@ -343,7 +343,7 @@ Answer based on the provided information:"""
             for candidate in context['candidate_references']:
                 parts.append(f"Candidate: {candidate.get('candidate_name')}")
                 parts.append(f"Rank: {candidate.get('rank')}")
-                parts.append(f"Matching Score: {candidate.get('final_score', 0):.1%}")
+                parts.append(f"Matching Score: {candidate.get('final_score', 0):.1f}%")
         
         return "\n".join(parts)
     
@@ -385,7 +385,7 @@ Answer based on the provided information:"""
             line = f"{idx}. {candidate_name} ({resume_file})"
             
             if score > 0:
-                line += f" - Score: {score:.1%}"
+                line += f" - Score: {score:.1f}%"
             
             response_lines.append(line)
         

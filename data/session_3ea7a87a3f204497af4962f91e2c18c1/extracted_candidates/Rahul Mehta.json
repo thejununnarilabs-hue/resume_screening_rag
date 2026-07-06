@@ -3,17 +3,18 @@
   "email": "rahul.mehta.dev@outlook.com",
   "phone": "+91 91234 56780",
   "skills": [
-    "Docker",
-    "TypeScript",
-    "Azure",
     "PostgreSQL",
-    "React",
-    "Express",
     "JavaScript",
+    "MongoDB",
+    "Express",
+    "REST APIs",
     "AWS",
-    "Node.js",
     "CI/CD",
-    "MongoDB"
+    "Azure",
+    "Node.js",
+    "TypeScript",
+    "React",
+    "Docker"
   ],
   "education": [
     "B.Tech in Computer Science and Engineering",
